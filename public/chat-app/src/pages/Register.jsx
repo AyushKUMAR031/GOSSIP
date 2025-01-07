@@ -20,13 +20,13 @@ function Register() {
     setValues({ ...values, [event.target.name]: event.target.value });
   };
 
-  useEffect(() => {
-    if (localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
-      navigate("/");
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
+  //     navigate("/");
+  //   }
+  // }, []);
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const toastOptions = {
     position: "bottom-right",
@@ -67,6 +67,7 @@ function Register() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (handleValidation()) {
+      console.log("in validation",registerRoute);
       const { email, username, password } = values;
       const { data } = await axios.post(registerRoute, {
         username,
@@ -74,13 +75,13 @@ function Register() {
         password,
       });
 
-      if (data.status === false) {
-        toast.error(data.msg, toastOptions);
-      }
-      if (data.status === true) {
-        localStorage.setItem(process.env.REACT_APP_LOCALHOST_KEY,JSON.stringify(data.user));
-        navigate("/");
-      }
+    //   if (data.status === false) {
+    //     toast.error(data.msg, toastOptions);
+    //   }
+    //   if (data.status === true) {
+    //     localStorage.setItem(process.env.REACT_APP_LOCALHOST_KEY,JSON.stringify(data.user));
+    //     navigate("/");
+    //   }
     }
   };
 
@@ -90,7 +91,7 @@ function Register() {
         <form action="" onSubmit={(event) => handleSubmit(event)}>
           <div className="brand">
             <img src={Logo} alt="logo" />
-            <h1>snappy</h1>
+            <h1>Gossip</h1>
           </div>
           <input type="text" placeholder="Username" name="username" onChange={(e) => handleChange(e)}/>
           <input type="email" placeholder="Email" name="email" onChange={(e) => handleChange(e)}/>
@@ -98,7 +99,7 @@ function Register() {
           <input type="password" placeholder="Confirm Password" name="confirmPassword" onChange={(e) => handleChange(e)}/>
           <button type="submit">Create User</button>
           <span>
-            Already have an account ? <Link to="/login">Login.</Link>
+            Already have an account ? <Link to="/login">Login</Link>
           </span>
         </form>
       </FormContainer>
