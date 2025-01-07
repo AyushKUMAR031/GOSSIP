@@ -26,7 +26,7 @@ function Register() {
   //   }
   // }, []);
 
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const toastOptions = {
     position: "bottom-right",
@@ -75,13 +75,13 @@ function Register() {
         password,
       });
 
-    //   if (data.status === false) {
-    //     toast.error(data.msg, toastOptions);
-    //   }
-    //   if (data.status === true) {
-    //     localStorage.setItem(process.env.REACT_APP_LOCALHOST_KEY,JSON.stringify(data.user));
-    //     navigate("/");
-    //   }
+      if (data.status === false) {
+        toast.error(data.msg, toastOptions);
+      }
+      if (data.status === true) {
+        localStorage.setItem("chat-app-User",JSON.stringify(data.user));
+        navigate("/");
+      }
     }
   };
 

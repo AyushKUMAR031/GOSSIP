@@ -10,7 +10,7 @@ function App(){
         {/* Add routes here */}
         <Route path="/register" element={<Register/>} />
         <Route path="/login" element={<Login/>} />
-        <Route path="/chat" element={<Chat/>} />
+        <Route path="/" element={<Chat/>} />
       </Routes>
     </BrowserRouter>
   )
