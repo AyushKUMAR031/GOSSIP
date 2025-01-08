@@ -20,11 +20,11 @@ function Register() {
     setValues({ ...values, [event.target.name]: event.target.value });
   };
 
-  // useEffect(() => {
-  //   if (localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
-  //     navigate("/");
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (localStorage.getItem('chat-app-User')) {
+      navigate("/");
+    }
+  }, []);
 
   const navigate = useNavigate();
 
@@ -39,22 +39,13 @@ function Register() {
   const handleValidation = () => {
     const { password, confirmPassword, username, email } = values;
     if (password !== confirmPassword) {
-      toast.error(
-        "Password and confirm password should be same.",
-        toastOptions
-      );
+      toast.error("Password and confirm password should be same.",toastOptions);
       return false;
     } else if (username.length < 3) {
-      toast.error(
-        "Username should be greater than 3 characters.",
-        toastOptions
-      );
+      toast.error("Username should be greater than 3 characters.",toastOptions);
       return false;
     } else if (password.length < 8) {
-      toast.error(
-        "Password should be equal or greater than 8 characters.",
-        toastOptions
-      );
+      toast.error("Password should be equal or greater than 8 characters.",toastOptions);
       return false;
     } else if (email === "") {
       toast.error("Email is required.", toastOptions);
@@ -67,7 +58,6 @@ function Register() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (handleValidation()) {
-      console.log("in validation",registerRoute);
       const { email, username, password } = values;
       const { data } = await axios.post(registerRoute, {
         username,
