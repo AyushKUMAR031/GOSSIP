@@ -27,18 +27,37 @@ export default function SetAvatar() {
         theme: "dark",
     };
 
-    const setProfilePicture = async () => {};
+    useEffect(() => {
+        if (!localStorage.getItem('chat-app-User')) {
+            navigate("/login");
+        }
+    }, []);
 
-    // useEffect(async () => {
-    //     const data = [];
-    //     for (let i = 0; i <= 5; i++) {
-    //         const image = await axios.get(`${api}/${Math.round(Math.random() * 1000)}`);
-    //         const buffer = new Buffer(image.data);
-    //         data.push(buffer.toString("base64"));
-    //     }
-    //     setAvatars(data);
-    //     setIsLoading(false);
-    // },[]);
+    const setProfilePicture = async () => {
+        if(selectedAvatar === undefined) {
+            toast.error("Please select an avatar", toastOptions);
+        }else{
+            const user = await JSON.parse(localStorage.getItem("chat-app-User"));
+
+            if (!user || !user._id) {
+                console.error("User data or _id is null:", user);
+                return; // Exit early to prevent further errors
+            }
+
+            const {data} = await axios.post(`${setAvatarRoute}/${user._id}`,{
+                image:avatars[selectedAvatar],
+            });
+            console.log(data);
+            if(data.isSet){
+                user.isAvatarImageSet = true;
+                user.avatarImage = data.image;
+                localStorage.setItem("chat-app-user", JSON.stringify(user));
+                navigate("/");
+            }else{
+                toast.error("Failed to set avatar.Please try Again", toastOptions);
+            }
+        }
+    };
 
     useEffect(() => {
         async function fetchData(){
@@ -58,24 +77,31 @@ export default function SetAvatar() {
 
     return (
         <>
-            <Container>
-                <div className="title-container">
-                    <h1>Pick an Avatar as your profile picture</h1>
-                </div>
-                <div className="avatars">
-                    {avatars.map((avatar, index) => {
-                        return (
-                            <div key={index} className={`avatar ${ selectedAvatar === index ? "selected" : ""}`}>
-                                <img src={`data:image/svg+xml;base64,${avatar}`} alt="avatar" key={avatar} onClick={() => setSelectedAvatar(index)}/>
-                            </div>
-                        )}
-                    )}
-                </div>
-                <button onClick={setProfilePicture} className="submit-btn">Set as Profile Picture</button>
-                <ToastContainer/>
-            </Container>
+            {
+                isLoading ? (<Container>
+                    <img src={loader} alt="loader" className="loader" />
+                    </Container>) : (
+                    
+                    <Container>
+                        <div className="title-container">
+                            <h1>Pick an Avatar as your profile picture</h1>
+                        </div>
+                        <div className="avatars">
+                            {avatars.map((avatar, index) => {
+                                return (
+                                    <div key={index} className={`avatar ${ selectedAvatar === index ? "selected" : ""}`}>
+                                        <img src={`data:image/svg+xml;base64,${avatar}`} alt="avatar" key={avatar} onClick={() => setSelectedAvatar(index)}/>
+                                    </div>
+                                )}
+                            )}
+                        </div>
+                        <button onClick={setProfilePicture} className="submit-btn">Set as Profile Picture</button>
+                        <ToastContainer/>
+                    </Container>
+                )
+            }
         </>   
-    )
+    );
 }
 
 const Container = styled.div`
@@ -134,11 +160,3 @@ const Container = styled.div`
   }
 `;
 
-// export default function SetAvatar() {
-//     return(
-//         <div>
-            
-//             <h1>SetAvatar</h1>
-//         </div>
-//     )
-// }
