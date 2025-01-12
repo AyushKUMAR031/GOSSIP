@@ -26,3 +26,5 @@
 
 ### APIs
 - **Avatar API:** Used for profile picture management.
+
+- Video Tutorial - [Video](https://youtu.be/otaQKODEUFs?si=kFUAAOZgg4FhlT4E)
