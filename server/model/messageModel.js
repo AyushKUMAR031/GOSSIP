@@ -1,9 +1,12 @@
 const mongoose = require("mongoose");
 
-const MessageSchema = mongoose.Schema(
+const MessageSchema = new mongoose.Schema(
   {
     message: {
-      text: { type: String, required: true },
+      text: { 
+        type: String, 
+        required: true 
+      },
     },
     users: Array,
     sender: {
