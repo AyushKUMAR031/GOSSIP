@@ -29,10 +29,10 @@ module.exports.login = async (req, res, next) => {
         const user = await User.findOne({ username });
         if (!user)
             return res.json({ msg: "Incorrect Username or Password", status: false });
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        const isPasswordValid = await bcrypt.compare(password, user.password); //compare method is given by bcrypt
         if (!isPasswordValid)
             return res.json({ msg: "Incorrect Username or Password", status: false });
-        delete user.password;
+        delete user.password; //yaha kyu ki password ko client side pe nahi chahiye
         return res.json({ status: true, user });
     } catch (ex) {
         next(ex);

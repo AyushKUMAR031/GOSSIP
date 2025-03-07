@@ -15,7 +15,8 @@ function Register() {
     password: "",
     confirmPassword: "",
   });
-
+  const navigate = useNavigate();
+  
   const handleChange = (event) => {
     setValues({ ...values, [event.target.name]: event.target.value });
   };
@@ -26,7 +27,6 @@ function Register() {
     }
   }, []);
 
-  const navigate = useNavigate();
 
   const toastOptions = {
     position: "bottom-right",

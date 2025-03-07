@@ -6,27 +6,32 @@ import styled from "styled-components";
 import { allUsersRoute } from "../utils/APIRoutes";
 import Contacts from "../components/Contacts";
 import Welcome from "../components/Welcome";
+import ChatContainer from "../components/ChatContainer";
 
 export default function Chat() {
   const [contacts, setContacts] = useState([]);
   const [currentUser, setCurrentUser] = useState(undefined);
   const [currentChat, setCurrentChat] = useState(undefined);
-
+  const [isloaded, setIsLoaded] = useState(false);
   const navigate = useNavigate();
 
+  //if we dont have the user in local storage then we will navigate to login page
   useEffect(() => {
-    async function fetch(){
-      if(!localStorage.getItem('chat-app-User')){
+    async function fetchData() {
+      if (!localStorage.getItem("chat-app-User")) {
         navigate("/login");
-      }else{
-        setCurrentUser(await JSON.parse(localStorage.getItem('chat-app-User')));
+      } else {
+        setCurrentUser(await JSON.parse(localStorage.getItem("chat-app-User")));
+        setIsLoaded(true);
       }
     }
-    fetch();
+    fetchData();
   },[]);
 
+  //if we have a user then we check if the user has set the avatar image or not
+  //if set then we fetch all the users from the server
   useEffect(() => {
-    async function fetch(){
+    async function fetchUsers() {
       if(currentUser){
         if(currentUser.isAvatarImageSet){
           const data = await axios.get(`${allUsersRoute}/${currentUser._id}`);
@@ -36,7 +41,7 @@ export default function Chat() {
         }
       }
     }
-    fetch();
+    fetchUsers();
   },[currentUser]);
 
 
@@ -49,8 +54,8 @@ export default function Chat() {
       <Container>
         <div className="container">
           <Contacts contacts={contacts} currentUser={currentUser} changeChat={handleChatChange} />
-          {currentChat === undefined ? ( <Welcome/>) :(
-            <h1>Chat</h1> 
+          {isloaded && currentChat === undefined ? ( <Welcome/>) :(
+            <ChatContainer currentChat={currentChat}  />
           )}
         </div>
       </Container>

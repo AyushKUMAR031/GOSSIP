@@ -13,6 +13,8 @@ function Login() {
     username: "",
     password: "",
   });
+  
+  const navigate = useNavigate();
 
   const handleChange = (event) => {
     setValues({ ...values, [event.target.name]: event.target.value });
@@ -23,8 +25,6 @@ function Login() {
       navigate("/");
     }
   }, []);
-
-  const navigate = useNavigate();
 
   const toastOptions = {
     position: "bottom-right",
@@ -71,7 +71,7 @@ function Login() {
         <form action="" onSubmit={(event) => handleSubmit(event)}>
           <div className="brand">
             <img src={Logo} alt="logo" />
-            <h1>snappy</h1>
+            <h1>GOSSIP</h1>
           </div>
           <input type="text" placeholder="Username" name="username" onChange={(e) => handleChange(e)} min="3"/>
           <input type="password" placeholder="Password" name="password" onChange={(e) => handleChange(e)} />

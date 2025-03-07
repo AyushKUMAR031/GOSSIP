@@ -1,9 +1,13 @@
 const express = require('express');
-const cors = require('cors');
+const cors = require('cors'); //cross - origin - resource - sharing
+//CORS is a security feature implemented by web browsers that restricts web pages from making requests 
+//to a different domain than the one that served the web page. It prevents unauthorized cross-origin requests for security reasons.
+const app = express();
+
+require('dotenv').config();
+
 const mongoose = require('mongoose');
 const userRoutes = require('./routes/userRoutes');
-const app = express();
-require('dotenv').config();
 
 app.use(cors());
 app.use(express.json());

@@ -12,11 +12,10 @@ export default function Contacts({contacts, currentUser, changeChat}){
         // const data = await JSON.parse(localStorage.getItem('chat-app-User'));
         // setCurrentUserName(data.username);
         // setCurrentUserImage(data.avatarImage);
-        async function fetchUser() {
-            setCurrentUserName(currentUser.username);
-            setCurrentUserImage(currentUser.avatarImage);
-        }
-        fetchUser(); 
+        if (currentUser) {
+          setCurrentUserName(currentUser.username);
+          setCurrentUserImage(currentUser.avatarImage);
+        } 
     },[currentUser]);
 
     const changeCurrentChat = (index, contact) => {
@@ -25,43 +24,42 @@ export default function Contacts({contacts, currentUser, changeChat}){
     };
 
     return(
-        <>
-            {currentUserImage && currentUserName && (
-                <Container>
-                    <div className="brand">
-                        <img src={Logo} alt="logo" />
-                        <h3>GOSSIP</h3>
-                    </div>
-                    <div className="contacts">  
-                        {contacts.map((contact, index) => {
-                        return (
-                            <div key={contact._id} className={`contact ${index === currentSelected ? "selected" : ""}`} onClick={() => changeCurrentChat(index, contact)}> 
-                                
-                                <div className="avatar">
-                                    <img src={`data:image/svg+xml;base64,${contact.avatarImage}`} alt="userAvatar"/>
-                                </div>
-
-                                <div className="username">
-                                    <h3>{contact.username}</h3>
-                                </div>
-
-                            </div>
-                        );
-                        })}
+      <>
+        {currentUserImage && currentUserName && (
+          <Container>
+            <div className="brand">
+              <img src={Logo} alt="logo" />
+              <h3>GOSSIP</h3>
+            </div>
+            <div className="contacts">  
+              {contacts.map((contact, index) => {
+                return (
+                  <div key={contact._id} className={`contact ${index === currentSelected ? "selected" : ""}`} onClick={() => changeCurrentChat(index, contact)}> 
+                    <div className="avatar">
+                      <img src={`data:image/svg+xml;base64,${contact.avatarImage}`} alt="userAvatar"/>
                     </div>
 
-                    <div className="current-user">
-                        <div className="avatar">
-                            <img src={`data:image/svg+xml;base64,${currentUserImage}`} alt="userAvatar"/>
-                        </div>
-
-                        <div className="username">
-                            <h2>{currentUserName}</h2>
-                        </div>
+                    <div className="username">
+                      <h3>{contact.username}</h3>
                     </div>
-                </Container>
-            )}
-        </>
+
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="current-user">
+              <div className="avatar">
+                <img src={`data:image/svg+xml;base64,${currentUserImage}`} alt="userAvatar"/>
+              </div>
+
+              <div className="username">
+                <h2>{currentUserName}</h2>
+              </div>
+            </div>
+          </Container>
+        )}
+      </>
     );
 }
 
