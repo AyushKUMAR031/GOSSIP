@@ -27,4 +27,15 @@
 ### APIs
 - **Avatar API:** Used for profile picture management.
 
+### Tutorials
+- **WebSockets and Socket.IO :**
+  
+| Topic | Resource Type |
+| ----| ----|
+| WebSockets  | [Dave Gray Video](https://youtu.be/J8xReLuBNPY?si=yAQgwKY8VGHmweLR) |
+| Socket.IO   | [Piyush Garg Video](https://youtu.be/UUddpbgPEJM?si=iY889J61wDsZdZFA) |
+| Documents   | [Notion](https://cumbersome-accordion-690.notion.site/WebSocket-and-Socket-io-17770d1afa5e809f9020cf0ad7a5863e?pvs=4) |
+
+
+
 - Video Tutorial - [Video](https://youtu.be/otaQKODEUFs?si=kFUAAOZgg4FhlT4E)
