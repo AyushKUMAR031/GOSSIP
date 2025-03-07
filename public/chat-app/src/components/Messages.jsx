@@ -3,10 +3,12 @@ import styled from 'styled-components';
 
 export default function Messages() {
   return (
-    <div>
-      hello
-    </div>
+    <Container>
+      Messages
+    </Container>
   )
 }
 
-const Container = styled.div``; 
+const Container = styled.div`
+  height : 80%;
+`; 

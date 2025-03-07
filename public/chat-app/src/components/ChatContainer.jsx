@@ -4,33 +4,30 @@ import axios from "axios";
 import Logout from "./logout";
 import ChatInput from "./ChatInput";
 import Messages from "./Messages";
+import { sendMessageRoute } from "../utils/APIRoutes";
 
-export default function ChatContainer({ currentChat, socket }) {
-    const [messages, setMessages] = useState([]);
-    const scrollRef = useRef();
-    const [newMessage, setNewMessage] = useState("");
-
+export default function ChatContainer({ currentChat }) {
     const handleSendMsg = async (msg) => {
-
-    }
+      alert(msg);
+    };
 
     return (
         <>
         {currentChat && (
             <Container>
-                <div className="chat-header">
-                    <div className="user-details">
-                        <div className="avatar">
-                            <img src={`data:image/svg+xml;base64,${currentChat.avatarImage}`} alt="userAvatar" />
-                        </div>
-                        <div className="username">
-                            <h3>{currentChat.username}</h3>
-                        </div>
-                    </div>
-                    <Logout />
+              <div className="chat-header">
+                <div className="user-details">
+                  <div className="avatar">
+                      <img src={`data:image/svg+xml;base64,${currentChat.avatarImage}`} alt="userAvatar" />
+                  </div>
+                  <div className="username">
+                      <h3>{currentChat.username}</h3>
+                  </div>
                 </div>
-                <Messages />
-                <ChatInput handleSendMsg = {handleSendMsg}/>
+                  <Logout />
+              </div>
+              <Messages />
+              <ChatInput handleSendMsg = {handleSendMsg}/>
             </Container>
         )}
         </>
