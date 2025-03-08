@@ -1,42 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import ChatInput from "./ChatInput";
-import axios from "axios";
 import Logout from "./logout";
+import {v4 as uuidv4} from "uuid";
+import axios from "axios";
 
 import { getMessagesRoute, sendMessageRoute } from "../utils/APIRoutes";
 
-export default function ChatContainer({ currentChat, currentUser }) {
+export default function ChatContainer({ currentChat, currentUser, socket }) {
   const [messages, setMessages] = useState([]);
+  const scrollRef = useRef();
+  const [arrivalMessage, setArrivalMessage] = useState(null);
   
-  // //render previous chat initially
-  // useEffect(async() => {
-  //   const fetchMessages = async () => {
-  //     if (!currentUser || !currentChat) return; // Prevent fetching if data is missing
   
-  //     try {
-  //       const response = await axios.post(getMessagesRoute, {
-  //         from: currentUser._id,
-  //         to: currentChat._id,
-  //       });
-  //       setMessages(response.data);
-  //     } catch (error) {
-  //       console.error("Error fetching messages:", error);
-  //     }
-  //   };
-  
-  //   fetchMessages();
-  // }, [currentChat,currentUser]);
-
-  // //update the chat when a new message is sent
-  // const handleSendMsg = async (msg) => {
-  //   await axios.post(sendMessageRoute, {
-  //     from: currentUser._id,
-  //     to: currentChat._id,
-  //     message: msg,
-  //   });
-  // };
-
   //render previous chat initially
   useEffect(() => {
     const fetchMessages = async () => {
@@ -63,11 +39,36 @@ export default function ChatContainer({ currentChat, currentUser }) {
       to: currentChat._id,
       message: msg,
     });
+    socket.current.emit("send-msg", {
+      to: currentChat._id,
+      from: currentUser._id,
+      message: msg,
+    });
+
+    const msgs = [...messages];
+    msgs.push({fromSelf: true, message: msg});
+    setMessages(msgs);
   };
 
   if (!currentUser || !currentChat) {
     return <div>Loading chat...</div>;
   }
+
+  useEffect(() => {
+    if (socket.current) {
+      socket.current.on("msg-receive", (msg) => {
+        setArrivalMessage({ fromSelf: false, message: msg });
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    arrivalMessage && setMessages((prev) => [...prev, arrivalMessage]);
+  }, [arrivalMessage]);
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   return (
       <>
@@ -76,7 +77,7 @@ export default function ChatContainer({ currentChat, currentUser }) {
             <div className="chat-header">
               <div className="user-details">
                 <div className="avatar">
-                    <img src={`data:image/svg+xml;base64,${currentChat.avatarImage}`} alt="userAvatar" />
+                    <img src={`data:image/svg+xml;base64,${currentChat.avatarImage}`} alt="NoDp" />
                 </div>
                 <div className="username">
                     <h3>{currentChat.username}</h3>
@@ -88,7 +89,7 @@ export default function ChatContainer({ currentChat, currentUser }) {
               {
                 messages.map((message) => {
                   return(
-                    <div>
+                    <div ref={scrollRef} key={uuidv4()}> 
                       <div className={`message ${message.fromSelf ? "sended" : "recieved" }`}>
                         <div className="content">
                           <p>

@@ -22,7 +22,7 @@ function Register() {
   };
 
   useEffect(() => {
-    if (localStorage.getItem('chat-app-User')) {
+    if (localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
       navigate("/");
     }
   }, []);
@@ -69,7 +69,7 @@ function Register() {
         toast.error(data.msg, toastOptions);
       }
       if (data.status === true) {
-        localStorage.setItem("chat-app-User",JSON.stringify(data.user));
+        localStorage.setItem(process.env.REACT_APP_LOCALHOST_KEY,JSON.stringify(data.user));
         navigate("/");
       }
     }
@@ -107,17 +107,19 @@ const FormContainer = styled.div`
   gap: 1rem;
   align-items: center;
   background-color: #131324;
+
   .brand {
     display: flex;
     align-items: center;
     gap: 1rem;
     justify-content: center;
     img {
-      height: 5rem;
+      height: 4rem;  /* Slightly smaller logo for smaller screens */
     }
     h1 {
       color: white;
       text-transform: uppercase;
+      font-size: 1.5rem; /* Responsive text size */
     }
   }
 
@@ -127,8 +129,11 @@ const FormContainer = styled.div`
     gap: 2rem;
     background-color: #00000076;
     border-radius: 2rem;
-    padding: 3rem 5rem;
+    padding: 2.5rem 3rem;  /* Adjusted padding for better spacing */
+    width: 90%;  /* Flexible width */
+    max-width: 400px; /* Limits form width on larger screens */
   }
+
   input {
     background-color: transparent;
     padding: 1rem;
@@ -142,10 +147,11 @@ const FormContainer = styled.div`
       outline: none;
     }
   }
+
   button {
     background-color: #4e0eff;
     color: white;
-    padding: 1rem 2rem;
+    padding: 1rem;
     border: none;
     font-weight: bold;
     cursor: pointer;
@@ -156,13 +162,36 @@ const FormContainer = styled.div`
       background-color: #4e0eff;
     }
   }
+
   span {
     color: white;
     text-transform: uppercase;
+    text-align: center;  /* Center text for mobile devices */
     a {
       color: #4e0eff;
       text-decoration: none;
       font-weight: bold;
+    }
+  }
+
+  /* Media Query for Smaller Screens (Mobile) */
+  @media (max-width: 768px) {
+    form {
+      padding: 2rem; /* Reduced padding for better space usage */
+      width: 100%;
+    }
+
+    .brand img {
+      height: 3rem;  /* Smaller logo for better fit */
+    }
+
+    h1 {
+      font-size: 1.2rem; /* Smaller text for mobile */
+    }
+
+    input,
+    button {
+      font-size: 0.9rem; /* Slightly smaller text for better fit */
     }
   }
 `;
