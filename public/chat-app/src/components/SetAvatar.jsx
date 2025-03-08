@@ -7,10 +7,15 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import { setAvatarRoute } from "../utils/APIRoutes";
+import List from "./avatarList";
 
 export default function SetAvatar() {
 
-    const api = `https://api.multiavatar.com/4645646`;
+    const api = `https://api.dicebear.com/9.x/adventurer/svg?seed=`;
+
+    const getRandomName = () => {
+        return List[Math.floor(Math.random() * List.length)];
+    }
 
     const navigate = useNavigate();
 
@@ -28,7 +33,7 @@ export default function SetAvatar() {
 
     useEffect(() => {
         async function fetchData() {
-            if (!localStorage.getItem("chat-app-User")) {
+            if (!localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
                 navigate("/login");
             }
         }
@@ -39,7 +44,7 @@ export default function SetAvatar() {
         if(selectedAvatar === undefined) {
             toast.error("Please select an avatar", toastOptions);
         }else{
-            const user = await JSON.parse(localStorage.getItem("chat-app-User"));
+            const user = await JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY));
 
             const {data} = await axios.post(`${setAvatarRoute}/${user._id}`,{
                 image:avatars[selectedAvatar],
@@ -47,18 +52,19 @@ export default function SetAvatar() {
             if(data.isSet){
                 user.isAvatarImageSet = true;
                 user.avatarImage = data.image;
-                localStorage.setItem("chat-app-user", JSON.stringify(user));
+                localStorage.setItem(process.env.REACT_APP_LOCALHOST_KEY, JSON.stringify(user));
                 navigate("/");
             }else{
                 toast.error("Failed to set avatar.Please try Again", toastOptions);
             }
+        }
     };
 
     useEffect(() => {
         async function fetchAvatars() {
             const data = [];
             for (let i = 0; i < 4; i++) { //foreach doesn't work here with api call
-            const image = await axios.get(`${api}/${Math.round(Math.random() * 1000)}`);
+            const image = await axios.get(`${api}${getRandomName()}}`);
             const buffer = new Buffer(image.data);
             data.push(buffer.toString("base64"));
             }
@@ -93,7 +99,6 @@ export default function SetAvatar() {
         }
         </>   
     );
-    }
 }
 
 const Container = styled.div `

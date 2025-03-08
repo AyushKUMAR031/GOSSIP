@@ -8,7 +8,7 @@ export default function Welcome() {
   useEffect(() => {
     async function fetchUser() {
         setUserName(
-        await JSON.parse(localStorage.getItem('chat-app-User')).username);
+        await JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)).username);
     }
     fetchUser();
   }, []);
