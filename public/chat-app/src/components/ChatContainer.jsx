@@ -2,17 +2,16 @@ import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import ChatInput from "./ChatInput";
 import Logout from "./logout";
-import {v4 as uuidv4} from "uuid";
+import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
-
 import { getMessagesRoute, sendMessageRoute } from "../utils/APIRoutes";
 
 export default function ChatContainer({ currentChat, currentUser, socket }) {
   const [messages, setMessages] = useState([]);
   const scrollRef = useRef();
   const [arrivalMessage, setArrivalMessage] = useState(null);
-  
-  
+  const chatContainerRef = useRef(null);
+
   //render previous chat initially
   useEffect(() => {
     const fetchMessages = async () => {
@@ -46,7 +45,7 @@ export default function ChatContainer({ currentChat, currentUser, socket }) {
     });
 
     const msgs = [...messages];
-    msgs.push({fromSelf: true, message: msg});
+    msgs.push({ fromSelf: true, message: msg });
     setMessages(msgs);
   };
 
@@ -71,42 +70,38 @@ export default function ChatContainer({ currentChat, currentUser, socket }) {
   }, [messages]);
 
   return (
-      <>
+    <>
       {currentChat && (
-          <Container>
-            <div className="chat-header">
-              <div className="user-details">
-                <div className="avatar">
-                    <img src={`data:image/svg+xml;base64,${currentChat.avatarImage}`} alt="NoDp" />
-                </div>
-                <div className="username">
-                    <h3>{currentChat.username}</h3>
-                </div>
+        <Container ref={chatContainerRef}>
+          <div className="chat-header">
+            <div className="user-details">
+              <div className="avatar">
+                <img src={`data:image/svg+xml;base64,${currentChat.avatarImage}`} alt="NoDp" />
               </div>
-                <Logout />
+              <div className="username">
+                <h3>{currentChat.username}</h3>
+              </div>
             </div>
-            <div className="chat-messages">
-              {
-                messages.map((message) => {
-                  return(
-                    <div ref={scrollRef} key={uuidv4()}> 
-                      <div className={`message ${message.fromSelf ? "sended" : "recieved" }`}>
-                        <div className="content">
-                          <p>
-                            {message.message}
-                          </p>
-                        </div>
-                      </div>
+            <Logout />
+          </div>
+          <div className="chat-messages">
+            {messages.map((message) => {
+              return (
+                <div ref={scrollRef} key={uuidv4()}>
+                  <div className={`message ${message.fromSelf ? "sended" : "recieved"}`}>
+                    <div className="content">
+                      <p>{message.message}</p>
                     </div>
-                  );
-                })
-              }
-            </div>
-            <ChatInput handleSendMsg = {handleSendMsg}/>
-          </Container>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <ChatInput handleSendMsg={handleSendMsg} chatContainerRef={chatContainerRef} />
+        </Container>
       )}
-      </>
-  )
+    </>
+  );
 }
 
 const Container = styled.div`
@@ -114,6 +109,7 @@ const Container = styled.div`
   grid-template-rows: 10% 80% 10%;
   gap: 0.1rem;
   overflow: hidden;
+  position: relative; /* Add this line */
   @media screen and (min-width: 720px) and (max-width: 1080px) {
     grid-template-rows: 15% 70% 15%;
   }
