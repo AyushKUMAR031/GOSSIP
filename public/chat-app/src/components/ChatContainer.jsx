@@ -1,41 +1,111 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
+import ChatInput from "./ChatInput";
 import axios from "axios";
 import Logout from "./logout";
-import ChatInput from "./ChatInput";
-import Messages from "./Messages";
-import { sendMessageRoute } from "../utils/APIRoutes";
 
-export default function ChatContainer({ currentChat }) {
-    const handleSendMsg = async (msg) => {
-      await axios.post(sendMessageRoute, {
-        from: currentChat._id,
-        to: currentChat._id,
-        message: msg,
-      })
+import { getMessagesRoute, sendMessageRoute } from "../utils/APIRoutes";
+
+export default function ChatContainer({ currentChat, currentUser }) {
+  const [messages, setMessages] = useState([]);
+  
+  // //render previous chat initially
+  // useEffect(async() => {
+  //   const fetchMessages = async () => {
+  //     if (!currentUser || !currentChat) return; // Prevent fetching if data is missing
+  
+  //     try {
+  //       const response = await axios.post(getMessagesRoute, {
+  //         from: currentUser._id,
+  //         to: currentChat._id,
+  //       });
+  //       setMessages(response.data);
+  //     } catch (error) {
+  //       console.error("Error fetching messages:", error);
+  //     }
+  //   };
+  
+  //   fetchMessages();
+  // }, [currentChat,currentUser]);
+
+  // //update the chat when a new message is sent
+  // const handleSendMsg = async (msg) => {
+  //   await axios.post(sendMessageRoute, {
+  //     from: currentUser._id,
+  //     to: currentChat._id,
+  //     message: msg,
+  //   });
+  // };
+
+  //render previous chat initially
+  useEffect(() => {
+    const fetchMessages = async () => {
+      if (!currentUser || !currentChat) return;
+      try {
+        const response = await axios.post(getMessagesRoute, {
+          from: currentUser._id,
+          to: currentChat._id,
+        });
+        setMessages(response.data);
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+      }
     };
 
-    return (
-        <>
-        {currentChat && (
-            <Container>
-              <div className="chat-header">
-                <div className="user-details">
-                  <div className="avatar">
-                      <img src={`data:image/svg+xml;base64,${currentChat.avatarImage}`} alt="userAvatar" />
-                  </div>
-                  <div className="username">
-                      <h3>{currentChat.username}</h3>
-                  </div>
+    fetchMessages();
+  }, [currentChat, currentUser]);
+
+  //update the chat when a new message is sent
+  const handleSendMsg = async (msg) => {
+    if (!currentUser || !currentChat) return;
+    await axios.post(sendMessageRoute, {
+      from: currentUser._id,
+      to: currentChat._id,
+      message: msg,
+    });
+  };
+
+  if (!currentUser || !currentChat) {
+    return <div>Loading chat...</div>;
+  }
+
+  return (
+      <>
+      {currentChat && (
+          <Container>
+            <div className="chat-header">
+              <div className="user-details">
+                <div className="avatar">
+                    <img src={`data:image/svg+xml;base64,${currentChat.avatarImage}`} alt="userAvatar" />
                 </div>
-                  <Logout />
+                <div className="username">
+                    <h3>{currentChat.username}</h3>
+                </div>
               </div>
-              <Messages />
-              <ChatInput handleSendMsg = {handleSendMsg}/>
-            </Container>
-        )}
-        </>
-    )
+                <Logout />
+            </div>
+            <div className="chat-messages">
+              {
+                messages.map((message) => {
+                  return(
+                    <div>
+                      <div className={`message ${message.fromSelf ? "sended" : "recieved" }`}>
+                        <div className="content">
+                          <p>
+                            {message.message}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              }
+            </div>
+            <ChatInput handleSendMsg = {handleSendMsg}/>
+          </Container>
+      )}
+      </>
+  )
 }
 
 const Container = styled.div`
