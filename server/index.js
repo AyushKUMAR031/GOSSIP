@@ -28,6 +28,11 @@ mongoose.connect(process.env.MONGO_URL,{
     console.log(err.message);
 });
 
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
+});
+
 //extra
 app.get("/ping", (_req, res) => {
     return res.json({ msg: "Ping Successful" });
