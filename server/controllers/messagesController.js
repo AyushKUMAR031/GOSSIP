@@ -1,10 +1,17 @@
 const Messages = require("../model/messageModel");
+const CryptoJS = require("crypto-js");
+
+const secretKey = process.env.SECRET_KEY;
 
 module.exports.addMessage = async (req, res, next) => {
   try {
     const { from, to, message } = req.body;
+
+    // Encrypting the message with AES (Advanced Encryption Standard)
+    const encryptedMessage = CryptoJS.AES.encrypt(message,secretKey).toString();
+
     const data = await Messages.create({
-      message: { text: message },
+      message: { text: encryptedMessage },
       users: [from, to],
       sender: from,
     });
@@ -26,13 +33,16 @@ module.exports.getMessages = async (req, res, next) => {
       },
     }).sort({ updatedAt: 1 });
 
-    const projectedMessages = messages.map((msg) => {
+    const decryptedMessages = messages.map((msg) => {
+      const bytes = CryptoJS.AES.decrypt(msg.message.text, secretKey);
+      const originalText = bytes.toString(CryptoJS.enc.Utf8);
       return {
-        fromSelf: msg.sender.toString() === from,
-        message: msg.message.text,
+          fromSelf: msg.sender.toString() === from,
+          message: originalText,
       };
     });
-    res.json(projectedMessages);
+
+    res.json(decryptedMessages);
   } catch (ex) {
     next(ex);
   }
