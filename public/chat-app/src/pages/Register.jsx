@@ -59,7 +59,7 @@ function Register() {
     event.preventDefault();
     if (handleValidation()) {
       const { email, username, password } = values;
-      const { data } = await axios.post(registerRoute, {
+      const { data } = await axios.post(registerRoute, { 
         username,
         email,
         password,
