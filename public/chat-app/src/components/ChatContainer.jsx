@@ -9,7 +9,6 @@ import { getMessagesRoute, sendMessageRoute } from "../utils/APIRoutes";
 export default function ChatContainer({ currentChat, currentUser, socket }) {
   const [messages, setMessages] = useState([]);
   const scrollRef = useRef();
-  const [arrivalMessage, setArrivalMessage] = useState(null);
   const chatContainerRef = useRef(null);
 
   //render previous chat initially
@@ -44,32 +43,34 @@ export default function ChatContainer({ currentChat, currentUser, socket }) {
       message: msg,
     });
 
-    const msgs = [...messages];
-    msgs.push({ fromSelf: true, message: msg });
+    const msgs = [...messages,{ fromSelf: true, message: msg }];
     setMessages(msgs);
   };
 
-  if (!currentUser || !currentChat) {
-    return <div>Loading chat...</div>;
-  }
-
   useEffect(() => {
     if (socket.current) {
-      socket.current.on("msg-receive", (msg) => {
-        if (currentChat?._id === msg.from) {
+      const handleMessageReceive = (msg) => {
+        if (currentChat && msg.from === currentChat._id) {
           setMessages((prev) => [...prev, { fromSelf: false, message: msg.message }]);
+        } else {
+          console.log("msg-from-another-chat");
         }
-      });
+      };
+  
+      socket.current.on("msg-receive", handleMessageReceive);
+  
+      // 🧼 Cleanup to prevent stacking listeners
+      return () => socket.current.off("msg-receive", handleMessageReceive);
     }
-  }, [socket, currentChat]);
-
-  useEffect(() => {
-    arrivalMessage && setMessages((prev) => [...prev, arrivalMessage]);
-  }, [arrivalMessage]);
+  }, [socket, currentChat]);  
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+  
+  if (!currentUser || !currentChat) {
+    return <div>Loading chat...</div>;
+  }
 
   return (
     <>
@@ -99,7 +100,7 @@ export default function ChatContainer({ currentChat, currentUser, socket }) {
               );
             })}
           </div>
-          <ChatInput handleSendMsg={handleSendMsg} chatContainerRef={chatContainerRef} />
+          <ChatInput handleSendMsg={handleSendMsg} chatContainerRef={chatContainerRef}/>
         </Container>
       )}
     </>

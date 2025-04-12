@@ -1,3 +1,4 @@
+// export const host = 'http://localhost:7777';
 export const host = 'https://gossip-u14t.onrender.com';
 export const registerRoute = `${host}/api/auth/register`;
 export const loginRoute = `${host}/api/auth/login`;

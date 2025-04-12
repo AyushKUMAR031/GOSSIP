@@ -33,10 +33,6 @@ app.use((err, req, res, next) => {
     res.status(500).send('Something broke!');
 });
 
-//extra
-app.get("/ping", (_req, res) => {
-    return res.json({ msg: "Ping Successful" });
-});
 
 const server = app.listen(process.env.PORT,() =>{
     console.log(`Server is running on port: ${process.env.PORT}`);
@@ -46,6 +42,7 @@ const server = app.listen(process.env.PORT,() =>{
 const io = socket(server, {
     cors: {
         origin: 'https://gossip-theta.vercel.app/',
+        // origin: 'http://localhost:5173',
         credentials: true,
     },
 });
@@ -58,11 +55,8 @@ const io = socket(server, {
 
 global.onlineUsers = new Map();
 /*
-In Node.js, global.onlineUsers = new Map(); initializes a Map to efficiently store key-value pairs, where userId is the key and socket.id is the value.
-
-    On User Connect: Adds the userId and socket.id to global.onlineUsers.
-    On Message Send: Retrieves the recipient's socket.id via .get() and emits the message.
-    On Disconnect: Removes the user from the Map to keep data updated.
+In Node.js, global.onlineUsers = new Map(); 
+initializes a Map to efficiently store key-value pairs, where userId is the key and socket.id is the value.
 */
 
 io.on("connection", (socket) => {
@@ -73,11 +67,13 @@ io.on("connection", (socket) => {
 
 
     socket.on("send-msg", (data) => {
+        console.log(data);
         const sendUserSocket = onlineUsers.get(data.to);
         if(sendUserSocket){
-            socket.to(sendUserSocket).emit("msg-receive",data.message);
+            socket.to(sendUserSocket).emit("msg-receive",{
+                from: data.from,
+                message: data.message
+            });
         }
     });
-
-
 });
