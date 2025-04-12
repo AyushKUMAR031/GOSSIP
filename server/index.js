@@ -45,7 +45,7 @@ const server = app.listen(process.env.PORT,() =>{
 //creating a socket.io instance
 const io = socket(server, {
     cors: {
-        origin: 'http://localhost:5173',
+        origin: 'https://gossip-theta.vercel.app/',
         credentials: true,
     },
 });
