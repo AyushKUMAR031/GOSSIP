@@ -15,7 +15,7 @@ const socket = require('socket.io');
 
 // CORS configuration
 const corsOptions = {
-    origin: "https://gossip-theta.vercel.app/",  // Replace with your frontend URL
+    origin: "https://gossip-theta.vercel.app",  // Replace with your frontend URL
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type"],
   };
@@ -50,7 +50,7 @@ const server = app.listen(process.env.PORT,() =>{
 //creating a socket.io instance
 const io = socket(server, {
     cors: {
-        origin: 'https://gossip-theta.vercel.app/',
+        origin: 'https://gossip-theta.vercel.app',
         // origin: 'http://localhost:5173',
         credentials: true,
     },
