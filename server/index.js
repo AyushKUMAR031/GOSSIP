@@ -13,7 +13,16 @@ const messagesRoute = require('./routes/messagesRoute');
 // socket.io for ws connection
 const socket = require('socket.io');
 
-app.use(cors());
+// CORS configuration
+const corsOptions = {
+    origin: "https://gossip-theta.vercel.app/",  // Replace with your frontend URL
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type"],
+  };
+  
+// Use the CORS middleware
+app.use(cors(corsOptions));
+
 app.use(express.json());
 
 app.use('/api/auth',userRoutes);
